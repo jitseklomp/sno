@@ -1,0 +1,53 @@
+############################################
+### GitLab Runner configuration template ###
+############################################
+
+## Environment-specific configuration
+
+# Token
+runnerRegistrationToken: <TODO>
+# Number of runners
+replicas: 1
+# Internal path to GitLab server instance
+gitlabUrl: <TODO> 
+certsSecretName: gitlab-wildcard-tls-chain
+
+
+## Default settings
+image: registry.gitlab.com/gitlab-org/ci-cd/gitlab-runner-ubi-images/gitlab-runner-ocp:amd64-v14.9.1
+imagePullPolicy: IfNotPresent
+concurrent: 10
+checkInterval: 30
+sessionServer:
+  enabled: false
+rbac:
+  create: false
+  clusterWideAccess: false
+  serviceAccountName: gitlab-runner-sa 
+  podSecurityPolicy:
+    enabled: false
+    resourceNames:
+    - gitlab-runner
+metrics:
+  enabled: true
+  portName: metrics
+  port: 9252
+  serviceMonitor:
+    enabled: true 
+service:
+  enabled: true
+  type: ClusterIP
+runners:
+  config: |
+    [[runners]]
+      [runners.kubernetes]
+        namespace = "{{.Release.Namespace}}"
+        helper_image = "registry.gitlab.com/gitlab-org/ci-cd/gitlab-runner-ubi-images/gitlab-runner-helper-ocp:x86_64-v14.9.1"
+        [runners.kubernetes.pod_security_context]
+          run_as_non_root = true
+          run_as_user = 59417
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1001
+  fsGroup: 1001
+  supplementalGroups: [0]

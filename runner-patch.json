@@ -1,0 +1,14 @@
+{
+  "spec": {
+     "template": {
+      "spec": {
+       "containers": [
+        {
+           "name": "runner-gitlab-runner",
+           "command": [ "tini", "--", "/bin/bash", "/configmaps/entrypoint" ]
+        }
+       ]
+      }
+     }
+  }
+ }
